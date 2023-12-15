@@ -1,0 +1,29 @@
+﻿<Window x:Class="CollectionLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CollectionLauncher"
+        mc:Ignorable="d"
+        Title="Game Collection Launcher" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+
+    <Grid>
+
+        <Image x:Name="blurredImage" Margin="0,0,0,0" Stretch="UniformToFill"/>
+        <Rectangle Margin="0,0,0,0" Fill="#AA000000"/>
+        <ScrollViewer x:Name="scrollPanel" HorizontalScrollBarVisibility="Hidden"
+                      CanContentScroll="False"
+              PreviewMouseLeftButtonDown="ScrollViewer_PreviewMouseLeftButtonDown"
+              PreviewMouseMove="ScrollViewer_PreviewMouseMove"
+              PreviewMouseLeftButtonUp="ScrollViewer_PreviewMouseLeftButtonUp" VerticalScrollBarVisibility="Disabled">
+            <StackPanel x:Name="gamesImageContainer" Orientation="Horizontal" HorizontalAlignment="Left">
+
+            </StackPanel>
+        </ScrollViewer>
+        <ComboBox x:Name="audioList" Width="250" Height="20" Margin="5,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" OpacityMask="White" Opacity="0.5" FontSize="10"/>
+        <Slider x:Name="volumeSlide" Width="235" Height="19" Margin="25,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="0.5" FontSize="9" Maximum="100" SmallChange="1"/>
+        <CheckBox x:Name="volumeMuted" Width="20" Height="20" Margin="5,31,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Opacity="0.5" FontSize="9"/>
+        <Button x:Name="btnAddGame" Margin="0,5,5,0" Height="19" VerticalAlignment="Top" HorizontalAlignment="Right" Width="60" Content="Add Game" FontSize="9" FontWeight="Bold" Click="btnAddGame_Click"/>
+        <Label x:Name="lblNoGame" Content="Click to add a new game" FontSize="72" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="32,164,33,164" Visibility="Hidden" MouseDown="lblNoGame_MouseDown"/>
+    </Grid>
+</Window>

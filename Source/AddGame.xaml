@@ -1,0 +1,22 @@
+﻿<Window x:Class="CollectionLauncher.AddGame"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CollectionLauncher"
+        mc:Ignorable="d"
+        Title="Add New Game" Height="270" Width="450" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <TextBox x:Name="txtGameTitle" Margin="10,34,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="25" FontSize="16"/>
+        <Label Content="Game Title:" HorizontalAlignment="Left" Margin="5,10,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtFilePath" Margin="10,90,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="25" FontSize="16"/>
+        <Label Content="Executeable Path:" HorizontalAlignment="Left" Margin="5,66,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnFile" Content="..." Height="25" Margin="0,90,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="30" Click="btnFile_Click"/>
+        <TextBox x:Name="txtCoverPath" Margin="10,147,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="25" FontSize="16"/>
+        <Label Content="Game Cover:" HorizontalAlignment="Left" Margin="5,123,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnCover" Content="..." Height="25" Margin="0,147,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="30" Click="btnCover_Click"/>
+        <Label Content="JPG Allowed" HorizontalAlignment="Right" Margin="0,124,10,0" VerticalAlignment="Top" Foreground="#FF6D6D6D" FontSize="10"/>
+        <Button x:Name="btnAdd" Content="Add" Height="35" Margin="10,186,10,0" VerticalAlignment="Top" Click="btnAdd_Click"/>
+
+    </Grid>
+</Window>
