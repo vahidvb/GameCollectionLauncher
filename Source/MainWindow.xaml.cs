@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
@@ -28,6 +29,8 @@ namespace CollectionLauncher
         private Controller controller;
         private DispatcherTimer timer;
         public static string currentPath = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? "";
+        private string gamePath = currentPath + @"\games\";
+
         public static int selectedIndex = 0;
         private List<Game> games = new();
         MMDevice currentDevice;
@@ -37,7 +40,6 @@ namespace CollectionLauncher
         {
             lblNoGame.Visibility = Visibility.Hidden;
             games.Clear();
-            var gamePath = currentPath + @"\games\";
             System.IO.Directory.CreateDirectory(gamePath);
             var directories = Directory.GetDirectories(currentPath + @"\games\");
             foreach (var directory in directories)
@@ -48,7 +50,6 @@ namespace CollectionLauncher
                     var game = new Game
                     {
                         Name = directoryInfo.Name,
-                        Path = directory
                     };
                     var jsonPath = System.IO.Path.Combine(directory, "info.json");
                     if (!File.Exists(jsonPath))
@@ -190,11 +191,7 @@ namespace CollectionLauncher
                     lastInteract = DateTime.Now;
 
                 }
-                else if (state.Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
-                {
-                    System.Diagnostics.Process.Start("explorer.exe", game.Path);
-                    lastInteract = DateTime.Now;
-                }
+
 
                 short thumbLeftX = state.Gamepad.LeftThumbX;
                 bool right = false;
@@ -249,34 +246,24 @@ namespace CollectionLauncher
             foreach (var game in games)
             {
                 DockPanel dockPanel = new();
-                BitmapImage coverImage = new(new Uri(System.IO.Path.Combine(game.Path, "cover.jpg")));
+                BitmapImage coverImage = new(new Uri(System.IO.Path.Combine(gamePath + game.Name, "cover.jpg")));
                 Image imageControl = new()
                 {
                     Source = coverImage,
                     Tag = game,
-                    Width = 300
+                    Width = 300,
+                    Height = 400,
+                    Stretch = Stretch.UniformToFill,
+                    StretchDirection = StretchDirection.DownOnly,
                 };
                 imageControl.MouseEnter += ImageControl_MouseEnter;
                 imageControl.MouseLeave += ImageControl_MouseLeave;
                 imageControl.MouseLeftButtonDown += ImageControl_MouseLeftButtonUp;
                 imageControl.MouseRightButtonUp += ImageControl_MouseRightButtonUp;
-                imageControl.MouseDown += ImageControl_MouseDown;
                 dockPanel.Children.Add(imageControl);
                 gamesImageContainer.Children.Add(dockPanel);
             }
         }
-
-        private void ImageControl_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
-            {
-                DockPanel p = (DockPanel)gamesImageContainer.Children[selectedIndex];
-                Image i = (Image)p.Children[0];
-                Game game = (Game)i.Tag;
-                Process.Start("explorer.exe", game.Path);
-            }
-        }
-
 
 
         private void ImageControl_MouseRightButtonUp(object sender, MouseButtonEventArgs e) => ImageRightClick((Image)sender);
@@ -287,8 +274,8 @@ namespace CollectionLauncher
                                            "Executable Game Path",
                                            game.InstalledPath,
                                            -1, -1).Replace("\"", "");
-            File.WriteAllText(System.IO.Path.Combine(game.Path, "info.json"), JsonConvert.SerializeObject(game));
-            games[games.IndexOf(games.First(x => x.Path == game.Path))] = game;
+            File.WriteAllText(System.IO.Path.Combine(gamePath + game.Name, "info.json"), JsonConvert.SerializeObject(game));
+            games[games.IndexOf(games.First(x => x.InstalledPath == game.InstalledPath))] = game;
             refreshGames();
         }
         private void ImageControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -300,9 +287,7 @@ namespace CollectionLauncher
         {
             Game game = (Game)image.Tag;
             game.RunCount += 1;
-            if (string.IsNullOrEmpty(game.InstalledPath))
-                System.Diagnostics.Process.Start("explorer.exe", game.Path);
-            else
+            if (!string.IsNullOrEmpty(game.InstalledPath))
             {
                 Process process = new();
                 process.StartInfo.FileName = game.InstalledPath;
@@ -311,7 +296,7 @@ namespace CollectionLauncher
 
             }
             game.LastRunDateTime = DateTime.Now;
-            File.WriteAllText(System.IO.Path.Combine(game.Path, "info.json"), JsonConvert.SerializeObject(game));
+            File.WriteAllText(System.IO.Path.Combine(gamePath + game.Name, "info.json"), JsonConvert.SerializeObject(game));
         }
 
         private void ImageControl_MouseLeave(object sender, MouseEventArgs e) => ImageMouseLeave((Image)sender);
@@ -324,7 +309,13 @@ namespace CollectionLauncher
                 To = 300,
                 Duration = TimeSpan.FromSeconds(0.25)
             };
+            DoubleAnimation heightAnimation = new()
+            {
+                To = 400,
+                Duration = TimeSpan.FromSeconds(0.25)
+            };
             image.BeginAnimation(Image.WidthProperty, widthAnimation);
+            image.BeginAnimation(Image.HeightProperty, heightAnimation);
         }
         private void ImageMouseEnter(Image image)
         {
@@ -341,9 +332,15 @@ namespace CollectionLauncher
                 To = 400,
                 Duration = TimeSpan.FromSeconds(0.25)
             };
+            DoubleAnimation heightAnimation = new()
+            {
+                To = 533,
+                Duration = TimeSpan.FromSeconds(0.25)
+            };
             image.BeginAnimation(Image.WidthProperty, widthAnimation);
+            image.BeginAnimation(Image.HeightProperty, heightAnimation);
             blurredImage.Source = image.Source;
-            selectedIndex = games.IndexOf(games.First(x => x.Path == game.Path));
+            selectedIndex = games.IndexOf(games.First(x => x.InstalledPath == game.InstalledPath));
         }
         private void ScrollViewer_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

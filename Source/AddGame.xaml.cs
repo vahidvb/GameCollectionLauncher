@@ -49,7 +49,6 @@ namespace CollectionLauncher
                 var game = new Game
                 {
                     Name = txtGameTitle.Text,
-                    Path = gamePath,
                     InstalledPath = txtFilePath.Text,
                 };
                 File.WriteAllText(System.IO.Path.Combine(gamePath, "info.json"), JsonConvert.SerializeObject(game));
